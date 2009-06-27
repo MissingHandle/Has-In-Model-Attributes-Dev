@@ -18,11 +18,11 @@ describe HimaMigration do
   end
   
   it "should have a method get_hima_schema which gets the schema for 1 model from the model file" do
-    HimaMigration.get_hima_schema(MyModel).should == false
+    #HimaMigration.get_hima_schema(MyModel).should == false
     MyModel.has_in_model_attributes
     MyModel.define_attribute(:name, :string, :limit => 24)
-    model = HimaMigration.get_hima_schema(MyModel)
-    model.hima_attributes.should == {:name => HimaAttribute.new({:name => :name, :type => :string, :options => {:limit => 24}})}
+    mymodel = HimaMigration.get_hima_schema(MyModel)
+    mymodel.hima_attributes.should == {:name => HimaAttribute.new({:name => :name, :type => :string, :options => {:limit => 24}})}
   end
   
   it "method write_one_migration writes a migration file, given the appropriate up and down migrations" do

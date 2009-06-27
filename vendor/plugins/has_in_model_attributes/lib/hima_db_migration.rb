@@ -3,11 +3,9 @@
 # require 'hima_db_delta'
 
 class HimaDbMigration < Object 
-  #DbMigration = all current needed changes to the db
-  #regarding one model file.
+  #DbMigration = all current needed changes to the db regarding one model file.
   
   #instance methods
-  
   attr_reader :up_deltas
   attr_reader :down_deltas
   

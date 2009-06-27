@@ -28,13 +28,14 @@ module GabrielSaravia #:nodoc:
             self.in_model_attributes = true
             class_inheritable_accessor :hima_model_representation
             self.hima_model_representation = HimaModel.new
-            debugger
             self.hima_model_representation.name = self.name
           end
         end
+        
       end
     
       module SingletonClassMethods
+        
         require 'hima_attribute'
         require 'hima_model'
   
@@ -45,6 +46,7 @@ module GabrielSaravia #:nodoc:
           a.options = args.last if args.last.is_a?(Hash)
           self.hima_model_representation.add(a)
         end
+        
       end
     
     end
