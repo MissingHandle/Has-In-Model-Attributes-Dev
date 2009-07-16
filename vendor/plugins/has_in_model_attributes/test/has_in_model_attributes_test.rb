@@ -1,8 +1,5 @@
 require 'test_helper'
 
 class HasInModelAttributesTest < ActiveSupport::TestCase
-  # Replace this with your real tests.
-  test "the truth" do
-    assert true
-  end
+  # USES RSPEC - tests in the 'spec' folder.
 end

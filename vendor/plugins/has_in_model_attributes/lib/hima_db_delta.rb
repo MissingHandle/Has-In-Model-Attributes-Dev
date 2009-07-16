@@ -1,9 +1,9 @@
 class HimaDbDelta < Object
+  #DbDelta = one migration command/one change to the database.
+  
   require 'rubygems'
   require 'active_support/inflector'
   
-  #DbDelta = one migration command.
-
   # * Adding a new table
   # * Renaming a table
   # * Removing a table

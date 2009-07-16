@@ -7,8 +7,8 @@ namespace :hima do
     require File.join(File.dirname(__FILE__), "../lib/hima_model.rb")
     require File.join(File.dirname(__FILE__), "../lib/hima_db_delta.rb")
     require File.join(File.dirname(__FILE__), "../lib/hima_db_migration.rb")
-    require File.join(File.dirname(__FILE__), "../lib/hima_migration.rb")
-    HimaMigration.do_migrations
+    require File.join(File.dirname(__FILE__), "../lib/hima_runner.rb")
+    HimaRunner.do_migrations
     #run "rake db:migrate" ?
   end
   
