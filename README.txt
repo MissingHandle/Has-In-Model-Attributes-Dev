@@ -1,24 +1,18 @@
-HasInModelAttributes - 0.0.1
+HasInModelAttributes - 0.2.0
 ====================
 
-(**this readme is meant do describe the finished version of Hima, for now it just describes the way Hima *should* work...not necessarily the way it currently does, although much of what is written here does seem to work.)
+HasInModelAttributes (HIMA) changes the behavior of the model with which it is used such that a model's attributes are defined in the model file itself and significantly automates the process of creating and running database migrations.  
 
-ActiveRecord Objects do not specify their attributes in the model file, instead inferring them by inspecting the database table.  While this a powerful feature (and was necessary for the creation of this plugin) from a design standpoint, i think it better to have a model's attributes specified within the model itself.  Doing so could result in even greater abstraction from the database, DRYer code, and a better coding experience.
+HIMA extends ActiveRecord with one function, "define_attribute" and adds one rake task, "rake hima:attributes".  The "define attribute" function is used to define attributes in the model file.  The rake task goes through the process of 'diff'ing your model file and your current database schema.  It then writes a migration file to bring the db schema in line with what you have specified in your file.
 
-In the interest of these three goals, HasInModelAttributes (HIMA) changes the behavior of the model with which it is used such that a model's attributes are defined in the model file itself and significantly automates the process of creating and running database migrations.  
-
-HIMA extends ActiveRecord with one function, "define_attribute" and adds one rake task, "rake hima:attributes"
-
-If you use HIMA with one of your models, you MUST specify your attributes in the model file, as the contents of the model file are seen as gospel, and the task "rake hima:attributes" will write a migration file for you to match your model definition.
-
-The last paragraph may sound restricting, but in actuality, HIMA should free you from a large amount of thinking about your database and make your programming life easier.  Refer to the examples below to see how to use HIMA:
+If you use HIMA with one of your models, you MUST specify your attributes in the model file, as the contents of the model file are seen as gospel, and the task "rake hima:attributes" will write a migration file for you to match your model definition.  While such a process may sound restricting, HIMA should free you from thinking about your database and make your programming life easier.  Refer to the examples below to see how to use HIMA:
 
 
 Examples
 =======
 
-EXAMPLE 1: An Attribute in your Model is Not In The Database
-1) Suppose Your Model only has two attribues, name, which is a string and some_stupid_number, an integer.  Using HIMA, your model should look like this:
+1 - ATTRIBUTES IN THE MODEL THAT ARE NOT IN THE DATABASE
+ Suppose Your Model only has two attributes, name, which is a string and some_stupid_number, an integer.  Using HIMA, your model should look like this:
 
 class MyModel < ActiveRecord::Base
 
@@ -29,11 +23,9 @@ class MyModel < ActiveRecord::Base
 
 end
 
-when you run "rake hima:attributes", HIMA checks (first) that there are no pending migrations (if there are then it fails). (<- It doesn't do this yet..watch out!)
+when you run "rake hima:attributes", the structure of the database table for MyModel will be checked, using whatever table name has been set or is assumed by rails naming conventions.  Then a "diff" of these two: what you have in your model, and what is in the database is performed, and if there is any difference, then a rails migration file will be created.  
 
- Then, it checks the structure of the database table for MyModel, using whatever table name has been set or is assumed by rails naming conventions.  It then (basically) creates a "diff" of these two: what you have in your model, and what is in the database.  
-
-If there is any difference, then a rails migration file will be created.  In the above case, supposing you have not yet run a migration for your attributes, HIMA will see that your model defines an attribute that is not in the database, so the migration will look like this:
+In the above case, supposing the table has been created, but without any attributes, then HIMA will see that your model defines an attribute that is not in the database, so the migration will look like this:
 
 def self.up
   add_column :my_model, :name, :string
@@ -46,10 +38,10 @@ def self.down
 end
 
 
-EXAMPLE 2: Model File and Database Are The Same
+2 - MODEL FILE AND DATABASE ARE THE SAME
 Following from above, suppose you then, just for the heck of it, decide to run the rake hima:attributes task again, with nothing being different.  In this case, no migration file will be generated and you will be told "nothing to be done for all HIMA Models"
 
-EXAMPLE 3: An Attribute In Your Database is Not In The Model File
+3 - AN ATTRIBUTE IN THE DATABASE IS NOT IN THE MODEL FILE
 suppose you then decide that the attribute "some_stupid_number" is pretty stupid, and you don't know why you put it there in the first place.  You can then simply delete the line from your model file, making it look like this:
 
 class MyModel < ActiveRecord::Base
@@ -70,40 +62,19 @@ def self.down
   add_column :my model, :some_stupid_number
 end
 
-EXAMPLE 4: Attribute Name Changes
+4 - ATTRIBUTE NAME CHANGES
 
-let's now say that you want to change the name of the "name" attribute to a "new_name" this can be done by using one of the ":should_be" option as follows:
+Attribute name changes are not currently handled.
 
-class MyModel < ActiveRecord::Base
+5 - TABLE NAME CHANGES
 
-  has_in_model_attributes
+Table name changes are not currently handled.
 
-  define_attribute :name, :string, :should_be => :new_name
+6 - TO DO:
+* Rake:attributes should check for pending migrations and fail if there are any.
+* :id, :updated_at, and :created_at should be specially handled.
+* Attribute name changes should reach into the model file, eliminate ':should_be' key, and correctly rename the attribute to prevent future mistakes.
+* Handle Table Name Changes Somehow.
 
-end
-
-now, when you run "rake hima_attributes" it will generate and run the following migration
-
-def self.up
-  rename_column :my_model, :name, :new_name
-end
-
-def self.down
-  rename_column :my_model, :new_name, :name
-end
-
-AND HIMA will also reach inside your model attribute definition and change it so that it looks like this:
-
-class MyModel < ActiveRecord::Base
-
-  has_in_model_attributes
-
-  define_attribute :new_name, :string
-
-end
-
-
-Conclusion:
-Those are all the examples I have for you for now...enjoy!
 
 Copyright (c) 2009 Gabriel Saravia, released under the MIT license

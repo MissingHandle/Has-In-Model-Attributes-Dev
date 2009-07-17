@@ -13,6 +13,6 @@ namespace :hima do
   end
   
   task :wipe_clean do #|model_name| model_name as argument?
-    #should basically run the reverse of the 'has_in_model_attributes' method
+    #should basically run the reverse of the 'attributes' method
   end
 end  

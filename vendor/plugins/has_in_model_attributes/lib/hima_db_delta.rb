@@ -4,17 +4,18 @@ class HimaDbDelta < Object
   require 'rubygems'
   require 'active_support/inflector'
   
-  # * Adding a new table
-  # * Renaming a table
-  # * Removing a table
+    # * Adding a new table
+    # * Removing an old table
+    # * Renaming a table
   
-  # * Adding a column to an existing table
-  # * Renaming a column
-  # * Changing a column's type and options
-  # * Removing a column
-  
-  # * Adding an index
-  # * Removing an index
+    # * Adding a column to an existing table
+    # * Changing a column's type and options
+    # * Removing a column
+    # * Renaming a column
+    
+    # * Adding an index
+    # * Removing an index
+
 
   TableCommands = [:create_table, :rename_table, :drop_table]
   ColumnCommands = [:add_column, :rename_column, :change_column, :remove_column]

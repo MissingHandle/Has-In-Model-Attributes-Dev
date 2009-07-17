@@ -30,7 +30,7 @@ describe HimaModel do
     @hima_model.respond_to?(:add).should be_true
   end
   
-  it "add should add a HimaAttribute to the hima_attributes array" do
+  it "method add should add a HimaAttribute to the hima_attributes array" do
     old_size = @hima_model.hima_attributes.length
     @hima_model.add HimaAttribute.new({:name => "attr_name"})
     @hima_model.hima_attributes.length.should == (old_size + 1)
@@ -108,5 +108,24 @@ describe HimaModel do
     @hima_model.should_not == @other
     @hima_model.should_not =~ @other
   end
-    
+  
+  it "method each_attribute should yield each attribute" do
+    @hima_model = HimaModel.new(@valid_attributes)
+    @hima_model.each_attribute do |a|
+      @valid_attributes[:hima_attributes][a.name].should == a 
+    end
+  end
+  
+  it "method has_same?(a) should return true if it has an attribute that is the same as a and false otherwise" do
+    @hima_model = HimaModel.new(@valid_attributes)
+    @hima_model.has_same?(HimaAttribute.new({:name => "name", :type => :string})).should be_true
+    @hima_model.has_same?(HimaAttribute.new({:name => "name", :type => :datetime})).should be_false
+  end
+  
+  it "method has_with_name?(a) should return true if it has an attribute that has the same name as a and false otherwise" do
+    @hima_model = HimaModel.new(@valid_attributes)
+    @hima_model.has_with_name?(HimaAttribute.new({:name => "name", :type => :datetime})).should be_true
+    @hima_model.has_with_name?(HimaAttribute.new({:name => "foo", :type => :string})).should be_false  
+  end
+  
 end

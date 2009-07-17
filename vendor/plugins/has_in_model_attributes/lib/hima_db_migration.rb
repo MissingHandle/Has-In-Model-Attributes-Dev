@@ -90,58 +90,60 @@ class HimaDbMigration < Object
     
     def make_table_migrations(senior_model, subordinate_model)
       delta = HimaDbDelta.new
-      if subordinate_model.name.empty? #No AR rep.
+      if !senior_model.name.empty? and subordinate_model.name.empty? #No AR rep.
         delta.model_name = senior_model.name
         delta.command = :create_table
         #delta.options ..not sure how to handle :force and :id options!
-        add_delta(delta)
+        add_delta(delta, "up")
         delta.command = :drop_table
-        add_delta(delta, "down")
-      elsif senior_model.name.empty? #No Hima rep.
-        delta.model_name = subordinate_name
-        delta.command = :drop_table
-        add_delta(delta)
-        delta.command = :create_table
-        add_delta(delta, "down")
-        tmp = HimaModel.new
-        make_column_migrations(subordinate_model, tmp, "down")
-      else #both, need to change name...?
-        delta.model_name = subordinate_model.name
-        delta.options[:new_name] = senior_model.name
-        delta.command = :rename_table
-        add_delta(delta)
-        delta.model_name = senior_model.name
-        delta.options[:new_name] = subordinate_model.name
         add_delta(delta, "down")
       end
+      if senior_model.name.empty? and !subordinate_model.name.empty? #No Hima rep.
+        delta.model_name = subordinate_name
+        delta.command = :drop_table
+        add_delta(delta, "up")
+        delta.command = :create_table
+        add_delta(delta, "down")
+        tmp = HimaModel.new  
+        make_column_migrations(subordinate_model, tmp, "down") #Do these last 2 lines work??
+      end
+      # TABLE RENAMES - NOT HANDLED.
+      #   delta.model_name = subordinate_model.name
+      #   delta.options[:new_name] = senior_model.name
+      #   delta.command = :rename_table
+      #   add_delta(delta)
+      #   delta.model_name = senior_model.name
+      #   delta.options[:new_name] = subordinate_model.name
+      #   add_delta(delta, "down")
     end
       
     
     def make_column_migrations(senior_model, subordinate_model, direction = "up")
       senior_model.each_attribute do |a|
         delta = HimaDbDelta.new
-        if !subordinate_model.has_exact_same?(a) #must add/change attributes
-          delta.model_name = senior_model.name
-          delta.options = a.options
-          delta.options[:column_name] = a.name
-          delta.options[:column_type] = a.type
-          if subordinate_model.has_with_name?(a) #definitely modifying type and/or options; 
-            delta.command = :change_column
-            add_delta(delta, direction)
-            if delta.options.key?(:should_be) #possibly renaming
-              delta.command = :rename_column
-              delta.options[:new_name] = delta.options[:should_be]
-              add_delta(delta, direction)
-            end
-          else
-            delta.command = :add_column
-            add_delta(delta, direction)
-          end # has_with_name?
-        end #has_exact_same?
+        delta.model_name = senior_model.name
+        delta.options = a.options
+        delta.options[:column_name] = a.name
+        delta.options[:column_type] = a.type
+        if !subordinate_model.has_same?(a) and subordinate_model.has_with_name?(a) #must change attributes
+          delta.command = :change_column
+          add_delta(delta, direction)
+        end
+        if subordinate_model.has_with_name?(a) and a.options.key?(:should_be) 
+          #must rename column (should come after change_column or change_column will fail!)
+          delta.command = :rename_column
+          delta.options[:new_name] = delta.options[:should_be]
+          add_delta(delta, direction)
+        end
+        if !subordinate_model.has_same?(a) and !subordinate_model.has_with_name?(a) #
+          delta.command = :add_column
+          add_delta(delta, direction)
+        end 
       end #block
-      subordinate_model.each_attribute do |a| #must delete attr's no longer around.
+      subordinate_model.each_attribute do |a| 
         delta = HimaDbDelta.new
         unless senior_model.has_with_name?(a)
+          #delete attr's that should no longer be in the schema.
           delta.model_name = senior_model.name
           delta.command = :remove_column
           delta.options[:column_name] = a.name
@@ -166,7 +168,7 @@ class HimaDbMigration < Object
           text_array.push(single_line)
         end
       else
-        raise "Error Invalid Migration Direction for HimaDbMigration.as_text_array: #{direction}, expected 'up' or 'down'"
+        raise "Error Invalid Migration Direction for HimaDbMigration.as_text_array: '#{direction}', expected 'up' or 'down'"
       end
       return text_array
     end

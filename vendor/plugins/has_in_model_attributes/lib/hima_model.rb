@@ -34,36 +34,6 @@ class HimaModel < Object
     expect_hima_attribute(hima_attribute)
     self.hima_attributes.delete(hima_attribute.name.to_sym)
   end
-
-  # MUST TEST
-  # 
-  def each_attribute
-    self.hima_attributes.each_key do |key|
-      yield(self.hima_attributes[key])
-    end
-  end
-  
-  def has_exact_same?(hima_attribute)
-    expect_hima_attribute(hima_attribute)   
-    key = hima_attribute.name.to_sym
-    self.hima_attributes.key?(key) && (hima_attribute == self.hima_attributes[key])
-  end
-  
-  def has_with_name?(hima_attribute)
-    expect_hima_attribute(hima_attribute)   
-    key = hima_attribute.name.to_sym
-    self.hima_attributes.key?(key)
-  end
-  
-  # def has_similar?(hima_attribute)
-  #   expect_hima_attribute(hima_attribute)   
-  #   key = hima_attribute.name.to_sym
-  #   self.hima_attributes.key?(key) &&
-  #   self.hima_attributes[key] =~ hima_attribute
-  # end
-  
-  ## --- End Must Test
-
   
   def clear!
     self.hima_attributes = {}
@@ -80,6 +50,24 @@ class HimaModel < Object
       return false unless other.hima_attributes.has_key?(attr_key) && other.hima_attributes[attr_key] =~ self.hima_attributes[attr_key]
     end
     true
+  end
+   
+  def each_attribute
+    self.hima_attributes.each_key do |key|
+      yield(self.hima_attributes[key])
+    end
+  end
+  
+  def has_same?(hima_attribute)
+    expect_hima_attribute(hima_attribute)   
+    key = hima_attribute.name.to_sym
+    self.hima_attributes.key?(key) && (self.hima_attributes[key] == hima_attribute)
+  end
+  
+  def has_with_name?(hima_attribute)
+    expect_hima_attribute(hima_attribute)   
+    key = hima_attribute.name.to_sym
+    self.hima_attributes.key?(key)
   end
   
   private
