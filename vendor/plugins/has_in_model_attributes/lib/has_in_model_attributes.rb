@@ -6,7 +6,7 @@
 
 # require "config/environment"
 # 
-MODEL_DIR   = File.join(RAILS_ROOT, "app/models")
+MODEL_DIR = File.join(RAILS_ROOT, "app/models")
 
 module GabrielSaravia #:nodoc:
   module Has #:nodoc:

@@ -9,10 +9,10 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090520020034) do
+ActiveRecord::Schema.define(:version => 20091120233103) do
 
   create_table "my_models", :force => true do |t|
-    t.string   "name"
+    t.string   "name",       :limit => 40
     t.datetime "created_at"
     t.datetime "updated_at"
   end

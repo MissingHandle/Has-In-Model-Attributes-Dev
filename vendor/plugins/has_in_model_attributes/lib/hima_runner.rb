@@ -55,10 +55,10 @@ module HimaRunner
     timestamp.utc
     time_string = timestamp.strftime("%Y%m%d%H%M%S")
     #generate a random alphanumeric string to append to the filename/class, code was googled.
-      s = ""
-      6.times { s << (i = Kernel.rand(62); i += ((i < 10) ? 48 : ((i < 36) ? 55 : 61 ))).chr }
+      chars = ('a'..'z').to_a + (1..9).to_a
+      s = (0...6).collect { chars[Kernel.rand(chars.length)] }.join
     #----
-    f = File.new(File.join("#{RAILS_ROOT}/db/migrate","#{time_string}_changes_to_#{klass_name}_#{s}.rb"), "w")
+    f = File.new(File.join("#{RAILS_ROOT}/db/migrate","#{time_string}_changes_to_#{klass_name.underscore}#{s}.rb"), "w")
     f.write("class ChangesTo#{klass_name}#{s} < ActiveRecord::Migration\n\n")
     migration.write_self_to_file(f)
     f.write("end") #class   

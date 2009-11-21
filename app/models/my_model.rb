@@ -10,5 +10,4 @@ class MyModel < ActiveRecord::Base
   #your own attributes
   define_attribute  :name, :string, :limit => 40
   
-  
 end

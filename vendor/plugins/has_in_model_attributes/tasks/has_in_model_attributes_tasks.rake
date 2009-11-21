@@ -9,7 +9,6 @@ namespace :hima do
     require File.join(File.dirname(__FILE__), "../lib/hima_db_migration.rb")
     require File.join(File.dirname(__FILE__), "../lib/hima_runner.rb")
     HimaRunner.do_migrations
-    #run "rake db:migrate" ?
   end
   
   task :wipe_clean do #|model_name| model_name as argument?
