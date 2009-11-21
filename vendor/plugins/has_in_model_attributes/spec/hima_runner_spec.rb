@@ -39,12 +39,12 @@ describe HimaRunner do
     hima_model = HimaRunner.get_hima_schema(MyModel)
     migration= HimaDbMigration.new
     migration.make_self(hima_model, ar_model)
-    f = HimaRunner.write_one_migration(MyModel, migration)
+    f = HimaRunner.write_one_migration("MyModel", migration)
     f.close
     false #have to inspect manually
   end
   
-  it "should have a method do_migrations which writes and runs all necessary migrations to unify two differing DB schemas" do
+  it "should have a method create_migration_files which writes and runs all necessary migrations to unify two differing DB schemas" do
   end
   
 end

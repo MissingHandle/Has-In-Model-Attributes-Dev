@@ -13,7 +13,7 @@ module HimaRunner
   SCHEMA_LINE = "Current Schema Version:"
 
   #Returns a list of all model files 
-  #in the app/models directory. (from "AnnotateModels")
+  #in the app/models directory as an array of strings. (from "AnnotateModels")
   def self.get_model_filenames
     models = []
     Dir.chdir(MODEL_DIR) do 
@@ -66,7 +66,7 @@ module HimaRunner
   end
   
   #Borrowing from Dave Thomas' Annotate Models
-  def self.do_migrations
+  def self.create_migration_files
     self.get_model_filenames.each do |m|
       class_name = m.sub(/\.rb$/,'').camelize
       begin
@@ -78,12 +78,15 @@ module HimaRunner
           migration = HimaDbMigration.new
           migration.make_self(from_model, from_ar)
           if !(migration.empty?)
+            puts "Writing migration file for #{class_name}\n"
             self.write_one_migration(class_name, migration)
             #Non-Existent Feature: 
             #edit_model_for_name_changes(from_model) #remove ':should_be' keys and make the name of the attribute the new name
+          else
+            puts "nothing to be done.\n"
           end
         else
-          puts "Skipping #{class_name}"
+          puts "Skipping #{class_name}\n"
         end
       rescue Exception => e
         puts "Unable to unify Schema from DB and ModelFile for #{class_name}: #{e.message}"

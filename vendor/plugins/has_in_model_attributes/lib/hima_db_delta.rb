@@ -24,7 +24,7 @@ class HimaDbDelta < Object
     
   ValidTableOptions = [:table_name, :id, :force, :new_name]
   ValidColumnOptions = [:column_name, :column_type, :new_name, :new_type,
-    :default, :null, :limit, :precision, :scale]  
+                        :default, :null, :limit, :precision, :scale]  
   ValidIndexOptions = [:column_name, :index_name, :unique]
   ValidOptions = ValidTableOptions + ValidColumnOptions + ValidIndexOptions
   
