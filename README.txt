@@ -1,6 +1,9 @@
 HasInModelAttributes - 0.2.0
 ====================
 
+This is now only here for nostalgic purposes - 
+this is the first code I wrote that I open sourced. (What what!)
+
 HasInModelAttributes (HIMA) changes the behavior of the model with which it is used such that a model's attributes are defined in the model file itself and significantly automates the process of creating and running database migrations.  
 
 HIMA extends ActiveRecord with one function, "define_attribute" and adds one rake task, "rake hima:attributes".  The "define attribute" function is used to define attributes in the model file.  The rake task goes through the process of 'diff'ing your model file and your current database schema.  It then writes a migration file to bring the db schema in line with what you have specified in your file.
